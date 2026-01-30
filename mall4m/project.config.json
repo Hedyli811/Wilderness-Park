@@ -44,8 +44,8 @@
     "disableSWC": true
   },
   "compileType": "miniprogram",
-  "libVersion": "2.23.2",
-  "appid": "wxeba9b200ca7d217d",
+  "libVersion": "3.10.2",
+  "appid": "wx2f13c03433599131",
   "projectname": "mall4j",
   "simulatorType": "wechat",
   "simulatorPluginLibVersion": {},
