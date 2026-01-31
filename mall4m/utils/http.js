@@ -10,7 +10,7 @@ function request(params, isGetTonken) {
   //   return;
   // }
   wx.request({
-    url: config.domain + params.url, //接口请求地址
+    url: config.domain + params.url, //接口请求地址 
     data: params.data,
     header: {
       // 'content-type': params.method == "GET" ? 'application/x-www-form-urlencoded' : 'application/json;charset=utf-8',
@@ -20,8 +20,7 @@ function request(params, isGetTonken) {
     dataType: 'json',
     responseType: params.responseType == undefined ? 'text' : params.responseType,
     success: function(res) {
-			const responseData = res.data
-
+			const responseData = res.data 
       // 00000 请求成功
       if (responseData.code === '00000') {
         if (params.callBack) {
@@ -164,7 +163,7 @@ function getCartCount() {
           text: res + "",
         })
         var app = getApp();
-        app.globalData.totalCartCount = res;
+        app.globalData.totalCartCount = res; 
       } else {
         wx.removeTabBarBadge({
           index: 2
