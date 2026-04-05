@@ -4,7 +4,6 @@ var http = require("../../utils/http.js");
 const Big = require("../../utils/big.min.js");
 
 Page({
-
   /**
    * 页面的初始数据
    */
@@ -14,64 +13,60 @@ Page({
     finalMoney: 0,
     totalMoney: 0,
     subtractMoney: 0,
-    allChecked: false
+    allChecked: false,
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad: function (options) {
-
-  },
+  onLoad: function (options) {},
 
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
-  onReady: function () {
-
-  },
+  onReady: function () {},
 
   /**
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-	this.loadBasketData();
-    http.getCartCount();//重新计算购物车总数量
+    this.loadBasketData();
+    http.getCartCount(); //重新计算购物车总数量
   },
-  
-  loadBasketData(){
-		wx.showLoading(); //加载购物车
-		
-		var params = {
-		  url: "/p/shopCart/info",
-		  method: "POST",
-		  data: {},
-		  callBack: res => {
-			if (res.length > 0) {
-			  // 默认不选中
-			  var shopCartItemDiscounts = res[0].shopCartItemDiscounts;
-			  shopCartItemDiscounts.forEach(shopCartItemDiscount => {
-				shopCartItemDiscount.shopCartItems.forEach(shopCartItem => {
-				  shopCartItem.checked = false;
-				});
-			  });
-			  this.setData({
-				shopCartItemDiscounts: shopCartItemDiscounts,
-				allChecked: false
-			  });
-			} else {
-			  this.setData({
-				shopCartItemDiscounts: []
-			  });
-			}
-		
-			this.calTotalPrice(); //计算总价
-		
-			wx.hideLoading();
-		  }
-		};
-		http.request(params);
-	},
+
+  loadBasketData() {
+    wx.showLoading(); //加载购物车
+
+    var params = {
+      url: "/p/shopCart/info",
+      method: "POST",
+      data: {},
+      callBack: (res) => {
+        if (res.length > 0) {
+          // 默认不选中
+          var shopCartItemDiscounts = res[0].shopCartItemDiscounts;
+          shopCartItemDiscounts.forEach((shopCartItemDiscount) => {
+            shopCartItemDiscount.shopCartItems.forEach((shopCartItem) => {
+              shopCartItem.checked = false;
+            });
+          });
+          this.setData({
+            shopCartItemDiscounts: shopCartItemDiscounts,
+            allChecked: false,
+          });
+        } else {
+          this.setData({
+            shopCartItemDiscounts: [],
+          });
+        }
+
+        this.calTotalPrice(); //计算总价
+
+        wx.hideLoading();
+      },
+    };
+    http.request(params);
+  },
 
   /**
    * 去结算
@@ -79,24 +74,24 @@ Page({
   toFirmOrder: function () {
     var shopCartItemDiscounts = this.data.shopCartItemDiscounts;
     var basketIds = [];
-    shopCartItemDiscounts.forEach(shopCartItemDiscount => {
-      shopCartItemDiscount.shopCartItems.forEach(shopCartItem => {
+    shopCartItemDiscounts.forEach((shopCartItemDiscount) => {
+      shopCartItemDiscount.shopCartItems.forEach((shopCartItem) => {
         if (shopCartItem.checked) {
-          basketIds.push(shopCartItem.basketId)
+          basketIds.push(shopCartItem.basketId);
         }
-      })
-    })
+      });
+    });
     if (!basketIds.length) {
       wx.showToast({
-        title: '请选择商品',
-        icon: "none"
-      })
-      return
+        title: "请选择商品",
+        icon: "none",
+      });
+      return;
     }
     wx.setStorageSync("basketIds", JSON.stringify(basketIds));
     wx.navigateTo({
-      url: '/pages/submit-order/submit-order?orderEntry=0',
-    })
+      url: "/pages/submit-order/submit-order?orderEntry=0",
+    });
   },
 
   /**
@@ -104,6 +99,7 @@ Page({
    */
   onSelAll: function () {
     var allChecked = this.data.allChecked;
+    //改变状态
     allChecked = !allChecked; //改变状态
     var shopCartItemDiscounts = this.data.shopCartItemDiscounts;
 
@@ -113,29 +109,29 @@ Page({
         cItems[j].checked = allChecked;
       }
     }
-    
+
     this.setData({
       allChecked: allChecked,
-      shopCartItemDiscounts: shopCartItemDiscounts
+      shopCartItemDiscounts: shopCartItemDiscounts,
     });
-    this.calTotalPrice();//计算总价
+    this.calTotalPrice(); //计算总价
   },
 
   /**
    * 每一项的选择事件
    */
   onSelectedItem: function (e) {
-    var index = e.currentTarget.dataset.index;// 获取data- 传进来的index
+    var index = e.currentTarget.dataset.index; // 获取data- 传进来的index
     var scindex = e.currentTarget.dataset.scindex;
 
-    var shopCartItemDiscounts = this.data.shopCartItemDiscounts;// 获取购物车列表
+    var shopCartItemDiscounts = this.data.shopCartItemDiscounts; // 获取购物车列表
     var checked = shopCartItemDiscounts[scindex].shopCartItems[index].checked; // 获取当前商品的选中状态
     shopCartItemDiscounts[scindex].shopCartItems[index].checked = !checked; // 改变状态
     this.setData({
-      shopCartItemDiscounts: shopCartItemDiscounts
+      shopCartItemDiscounts: shopCartItemDiscounts,
     });
-    this.checkAllSelected();//检查全选状态
-    this.calTotalPrice();//计算总价
+    this.checkAllSelected(); //检查全选状态
+    this.calTotalPrice(); //计算总价
   },
 
   /**
@@ -155,12 +151,12 @@ Page({
           break;
         }
       }
-      if(flag){
+      if (flag) {
         break;
       }
     }
     this.setData({
-      allChecked: allChecked
+      allChecked: allChecked,
     });
   },
 
@@ -189,13 +185,12 @@ Page({
         ths.setData({
           finalMoney: res.finalMoney,
           totalMoney: res.totalMoney,
-          subtractMoney: res.subtractMoney
+          subtractMoney: res.subtractMoney,
         });
         wx.hideLoading();
-      }
+      },
     };
     http.request(params);
-
   },
 
   /**
@@ -205,7 +200,8 @@ Page({
     var index = e.currentTarget.dataset.index;
     var scindex = e.currentTarget.dataset.scindex;
     var shopCartItemDiscounts = this.data.shopCartItemDiscounts;
-    var prodCount = shopCartItemDiscounts[scindex].shopCartItems[index].prodCount;
+    var prodCount =
+      shopCartItemDiscounts[scindex].shopCartItems[index].prodCount;
     if (prodCount > 1) {
       this.updateCount(shopCartItemDiscounts, scindex, index, -1);
     }
@@ -221,14 +217,13 @@ Page({
     this.updateCount(shopCartItemDiscounts, scindex, index, 1);
   },
 
-
   /**
    * 改变购物车数量接口
    */
   updateCount: function (shopCartItemDiscounts, scindex, index, prodCount) {
     var ths = this;
     wx.showLoading({
-      mask: true
+      mask: true,
     });
     var params = {
       url: "/p/shopCart/changeItem",
@@ -237,18 +232,19 @@ Page({
         count: prodCount,
         prodId: shopCartItemDiscounts[scindex].shopCartItems[index].prodId,
         skuId: shopCartItemDiscounts[scindex].shopCartItems[index].skuId,
-        shopId: 1
+        shopId: 1,
       },
       callBack: function (res) {
-        shopCartItemDiscounts[scindex].shopCartItems[index].prodCount += prodCount;
+        shopCartItemDiscounts[scindex].shopCartItems[index].prodCount +=
+          prodCount;
         ths.setData({
-          shopCartItemDiscounts: shopCartItemDiscounts
+          shopCartItemDiscounts: shopCartItemDiscounts,
         });
-        ths.calTotalPrice();//计算总价
+        ths.calTotalPrice(); //计算总价
         wx.hideLoading();
 
-        http.getCartCount();//重新计算购物车总数量
-      }
+        http.getCartCount(); //重新计算购物车总数量
+      },
     };
     http.request(params);
   },
@@ -272,19 +268,18 @@ Page({
 
     if (basketIds.length == 0) {
       wx.showToast({
-        title: '请选择商品',
-        icon: "none"
-      })
+        title: "请选择商品",
+        icon: "none",
+      });
     } else {
       wx.showModal({
-        title: '',
-        content: '确认要删除选中的商品吗？',
+        title: "",
+        content: "确认要删除选中的商品吗？",
         confirmColor: "#eb2444",
         success(res) {
           if (res.confirm) {
-
             wx.showLoading({
-              mask: true
+              mask: true,
             });
             var params = {
               url: "/p/shopCart/deleteItem",
@@ -293,16 +288,12 @@ Page({
               callBack: function (res) {
                 wx.hideLoading();
                 ths.loadBasketData();
-              }
+              },
             };
             http.request(params);
           }
-        }
-      })
+        },
+      });
     }
-
-
-  }
-
-
-})
+  },
+});
