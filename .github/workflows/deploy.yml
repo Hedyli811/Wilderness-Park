@@ -20,11 +20,21 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
             echo "🚀 开始全栈自动部署..."
-
             # 1. 拉取最新代码
             cd /opt/app/Wilderness-Park
             echo "拉取最新代码..."
-            git pull origin main
+
+            # 配置Git使用SSH
+            git config --global url."git@github.com:".insteadOf "https://github.com/"
+
+            # 添加重试机制处理网络不稳定
+            for i in {1..3}; do
+              git pull origin main && break
+              if [ $i -lt 3 ]; then
+                echo "网络错误，15秒后重试... ($i/3)"
+                sleep 15
+              fi
+            done
 
             # 2. 构建后端
             echo "构建后端..."
